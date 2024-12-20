@@ -87,4 +87,15 @@ public class Product {
 
         return products;
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", stock=" + stock +
+                '}';
+    }
 }
