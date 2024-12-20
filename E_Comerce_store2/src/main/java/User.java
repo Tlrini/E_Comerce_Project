@@ -3,10 +3,10 @@ import java.sql.SQLException;
 public abstract class User {
     private String username;
     private String password;
-    private int userId;  // User ID that uniquely identifies the user
+    private int userId;
     private RoleEnum role;
 
-    // Constructor
+
 
 
     public User(String username, String password, int userId, RoleEnum role) {
@@ -16,7 +16,7 @@ public abstract class User {
         this.role = role;
     }
 
-    // Getters and Setters
+
     public int getUserId() {
         return userId;
     }
@@ -49,7 +49,7 @@ public abstract class User {
         this.role = role;
     }
 
-    // Abstract methods to be implemented by subclasses
+
     public abstract boolean login(String username, String password);
     public abstract void register(String username, String password);
 }

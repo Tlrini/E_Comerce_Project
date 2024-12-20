@@ -232,13 +232,26 @@ public class Main {
                 seller.viewProducts();
                 break;
             case 3:
-                System.out.print("Enter product ID to update stock: ");
+
+                System.out.println("\nAvailable Products:");
+                seller.viewProducts();
+
+
+                System.out.print("\nEnter product ID to update stock: ");
                 int productId = scanner.nextInt();
                 System.out.print("Enter new stock quantity: ");
                 int newStock = scanner.nextInt();
                 scanner.nextLine();
-                seller.updateProductStock(productId, newStock);
+
+
+                boolean success = seller.updateProductStock(productId, newStock);
+                if (success) {
+                    System.out.println("Stock updated successfully!");
+                } else {
+                    System.out.println("Failed to update stock. Ensure the product ID is correct.");
+                }
                 break;
+
             case 4:
                 System.out.println("Logging out...");
                 break;

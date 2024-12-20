@@ -3,13 +3,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Seller extends User {
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public Seller(String username, String password, int userId) {
         super(username, password, userId, RoleEnum.SELLER);
     }
 
     public void addProduct(String name, double price, String description, int stock) {
-        String sql = "INSERT INTO product (name, price, description, stock, seller_id) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO products (name, price, description, stock, seller_id) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = DatabaseHandler.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -32,7 +41,7 @@ public class Seller extends User {
     }
 
     public void viewProducts() {
-        String sql = "SELECT id, name, price, description, stock FROM product WHERE seller_id = ?";
+        String sql = "SELECT id, name, price, description, stock FROM products WHERE seller_id = ?";
 
         try (Connection connection = DatabaseHandler.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -64,26 +73,26 @@ public class Seller extends User {
         }
     }
 
-    public void updateProductStock(int productId, int newStock) {
-        String sql = "UPDATE product SET stock = ? WHERE id = ? AND seller_id = ?";
-
+    public boolean updateProductStock(int productId, int newStock) {
+        String query = "UPDATE products SET stock = ? WHERE id = ? AND seller_id = ?";
         try (Connection connection = DatabaseHandler.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(query)) {
+
 
             statement.setInt(1, newStock);
             statement.setInt(2, productId);
-            statement.setInt(3, getUserId());
+            statement.setInt(3, this.id);
+
 
             int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("Stock updated successfully.");
-            } else {
-                System.out.println("Failed to update stock. Ensure the product ID is correct.");
-            }
+            return rowsUpdated > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
+
 
     @Override
     public boolean login(String username, String password) {

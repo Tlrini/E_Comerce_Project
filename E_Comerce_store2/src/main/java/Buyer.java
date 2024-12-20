@@ -44,7 +44,7 @@ public class Buyer extends User {
 
     public void addToCart(int productId) {
         try (Connection connection = DatabaseHandler.getConnection()) {
-            String query = "SELECT * FROM product WHERE id = ?";
+            String query = "SELECT * FROM products WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, productId);
             ResultSet resultSet = statement.executeQuery();
@@ -89,13 +89,12 @@ public class Buyer extends User {
 
         System.out.println("Total amount: " + total);
 
-        // Proceed with purchase: update stock and insert order into DB
         try (Connection connection = DatabaseHandler.getConnection()) {
-            connection.setAutoCommit(false); // Start transaction
+            connection.setAutoCommit(false);
 
-            // Update stock
+
             for (Product product : cart) {
-                String updateStockQuery = "UPDATE product SET stock = stock - 1 WHERE id = ? AND stock > 0";
+                String updateStockQuery = "UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0";
                 PreparedStatement statement = connection.prepareStatement(updateStockQuery);
                 statement.setInt(1, product.getId());
                 int rowsAffected = statement.executeUpdate();
@@ -106,7 +105,7 @@ public class Buyer extends User {
                 }
             }
 
-            // Add order
+
             String insertOrderQuery = "INSERT INTO orders (buyer_id, total_amount) VALUES (?, ?)";
             PreparedStatement orderStatement = connection.prepareStatement(insertOrderQuery, Statement.RETURN_GENERATED_KEYS);
             orderStatement.setInt(1, getUserId());
@@ -117,21 +116,28 @@ public class Buyer extends User {
             if (rs.next()) {
                 int orderId = rs.getInt(1);
 
-                // Add products to the order
+
                 for (Product product : cart) {
-                    String insertOrderItemsQuery = "INSERT INTO order_items (order_id, product_id) VALUES (?, ?)";
+                    String insertOrderItemsQuery = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
                     PreparedStatement orderItemStatement = connection.prepareStatement(insertOrderItemsQuery);
                     orderItemStatement.setInt(1, orderId);
                     orderItemStatement.setInt(2, product.getId());
+                    orderItemStatement.setInt(3, 1);
+                    orderItemStatement.setDouble(4, product.getPrice());
                     orderItemStatement.executeUpdate();
                 }
             }
 
-            connection.commit(); // Commit transaction
+            connection.commit();
             System.out.println("Order placed successfully.");
-            cart.clear(); // Clear the cart after checkout
+            cart.clear();
         } catch (SQLException e) {
             e.printStackTrace();
+            try (Connection connection = DatabaseHandler.getConnection()) {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
         }
     }
 }

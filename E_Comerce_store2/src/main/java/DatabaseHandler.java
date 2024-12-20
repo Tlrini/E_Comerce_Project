@@ -3,14 +3,14 @@ import java.sql.*;
 class DatabaseHandler {
     private static final String URL = "jdbc:mysql://localhost:3306/e_comerce_store2";
     private static final String USER = "root";
-    private static final String PASSWORD = ""; // Default MySQL password
+    private static final String PASSWORD = "";
 
-    // Establish database connection
+
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    // Add user to the database
+
     public void addUser(String username, String password, RoleEnum role, UserStatusEnum status) {
         try (Connection connection = getConnection()) {
             String query = "INSERT INTO users (username, password, role, status) VALUES (?, ?, ?, ?)";
@@ -26,7 +26,7 @@ class DatabaseHandler {
         }
     }
 
-    // Validate user login
+
     public boolean validateLogin(String username, String password, RoleEnum role) {
         try (Connection connection = getConnection()) {
             String query = "SELECT * FROM users WHERE username = ? AND password = ? AND role = ?";
@@ -45,7 +45,7 @@ class DatabaseHandler {
         return false;
     }
 
-    // Retrieve user role
+
     public RoleEnum getUserRole(String username) {
         try (Connection connection = getConnection()) {
             String query = "SELECT role FROM users WHERE username = ?";
@@ -62,7 +62,7 @@ class DatabaseHandler {
         return null;
     }
 
-    // Get all users
+
     public void getAllUsers() {
         try (Connection connection = getConnection()) {
             String query = "SELECT * FROM users";

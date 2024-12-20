@@ -9,7 +9,7 @@ public class Product {
     private String description;
     private int stock;
 
-    // Constructor that accepts 5 parameters
+
     public Product(int id, String name, double price, String description, int stock) {
         this.id = id;
         this.name = name;
@@ -59,17 +59,17 @@ public class Product {
         this.stock = stock;
     }
 
-    // Static method to fetch all products from the database
-    public static List<Product> getAllProducts() {
-        List<Product> products = new ArrayList<>(); // Use java.util.ArrayList
 
-        // Establish connection to the database
+    public static List<Product> getAllProducts() {
+        List<Product> products = new ArrayList<>();
+
+
         try (Connection connection = DatabaseHandler.getConnection()) {
-            String query = "SELECT * FROM products"; // SQL query to fetch all products
+            String query = "SELECT * FROM products";
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
 
-            // Iterate through the result set and create Product objects
+
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
@@ -77,7 +77,7 @@ public class Product {
                 String description = resultSet.getString("description");
                 int stock = resultSet.getInt("stock");
 
-                // Create a Product object and add it to the list
+
                 Product product = new Product(id, name, price, description, stock);
                 products.add(product);
             }
@@ -85,6 +85,6 @@ public class Product {
             e.printStackTrace();
         }
 
-        return products; // Return the list of products
+        return products;
     }
 }
