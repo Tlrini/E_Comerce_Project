@@ -1,13 +1,9 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Admin1 extends User {
 
     public Admin1(String username, String password, int userId) throws SQLException {
-        super(username, password,userId,RoleEnum.ADMIN);
+        super(username, password, userId, RoleEnum.ADMIN);
         setRole(RoleEnum.ADMIN);
     }
 
@@ -144,17 +140,24 @@ public class Admin1 extends User {
 
     public void viewAllOrders() {
         try (Connection connection = DatabaseHandler.getConnection()) {
-            String query = "SELECT * FROM orders";
+            String query = "SELECT id AS order_id, buyer_id, total_amount, order_date FROM orders";
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
 
+            System.out.println("All Orders:");
             while (resultSet.next()) {
-                System.out.println("Order ID: " + resultSet.getInt("order_id"));
-                System.out.println("Buyer: " + resultSet.getString("buyer_name"));
-                System.out.println("Total: " + resultSet.getDouble("total"));
+                int orderId = resultSet.getInt("order_id");
+                int buyerId = resultSet.getInt("buyer_id");
+                double totalAmount = resultSet.getDouble("total_amount");
+                Date orderDate = resultSet.getDate("order_date");
+
+                System.out.println("Order ID: " + orderId + ", Buyer ID: " + buyerId +
+                        ", Total Amount: " + totalAmount + ", Order Date: " + orderDate);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 }
+
