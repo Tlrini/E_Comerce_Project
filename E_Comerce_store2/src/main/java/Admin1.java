@@ -7,7 +7,7 @@ import java.sql.Statement;
 public class Admin1 extends User {
 
     public Admin1(String username, String password, int userId) throws SQLException {
-        super(username, password);
+        super(username, password,userId,RoleEnum.ADMIN);
         setRole(RoleEnum.ADMIN);
     }
 

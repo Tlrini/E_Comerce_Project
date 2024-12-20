@@ -4,9 +4,8 @@ import java.util.*;
 public class Buyer extends User {
     private List<Product> cart;
 
-    public Buyer(String username, String password, int userId) throws SQLException {
-        super(username, password);
-        setRole(RoleEnum.BUYER);
+    public Buyer(String username, String password, int userId) {
+        super(username, password, userId, RoleEnum.BUYER);
         this.cart = new ArrayList<>();
     }
 
@@ -32,7 +31,7 @@ public class Buyer extends User {
     @Override
     public void register(String username, String password) {
         try (Connection connection = DatabaseHandler.getConnection()) {
-            String query = "INSERT INTO users (username, password, role, status) VALUES (?, ?, 'BUYER', 'ACTIVE')";
+            String query = "INSERT INTO users (username, password, role) VALUES (?, ?, 'BUYER')";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, username);
             statement.setString(2, password);
@@ -45,7 +44,7 @@ public class Buyer extends User {
 
     public void addToCart(int productId) {
         try (Connection connection = DatabaseHandler.getConnection()) {
-            String query = "SELECT * FROM products WHERE id = ?";
+            String query = "SELECT * FROM product WHERE id = ?";
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, productId);
             ResultSet resultSet = statement.executeQuery();
@@ -57,7 +56,6 @@ public class Buyer extends User {
                         resultSet.getDouble("price"),
                         resultSet.getString("description"),
                         resultSet.getInt("stock")
-
                 );
                 cart.add(product);
                 System.out.println(product.getName() + " added to cart.");
@@ -97,7 +95,7 @@ public class Buyer extends User {
 
             // Update stock
             for (Product product : cart) {
-                String updateStockQuery = "UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0";
+                String updateStockQuery = "UPDATE product SET stock = stock - 1 WHERE id = ? AND stock > 0";
                 PreparedStatement statement = connection.prepareStatement(updateStockQuery);
                 statement.setInt(1, product.getId());
                 int rowsAffected = statement.executeUpdate();
@@ -136,6 +134,4 @@ public class Buyer extends User {
             e.printStackTrace();
         }
     }
-
-
 }

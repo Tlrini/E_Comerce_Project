@@ -7,9 +7,13 @@ public abstract class User {
     private RoleEnum role;
 
     // Constructor
-    public User(String username, String password) throws SQLException {
+
+
+    public User(String username, String password, int userId, RoleEnum role) {
         this.username = username;
         this.password = password;
+        this.userId = userId;
+        this.role = role;
     }
 
     // Getters and Setters
